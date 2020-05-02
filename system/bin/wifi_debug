@@ -1,0 +1,29 @@
+#!/system/bin/sh
+
+LOG_TAG=wifi_debug
+
+loge () {
+    echo "$LOG_TAG: $@"
+    /system/bin/log -t $LOG_TAG -p e "$@"
+}
+
+#################################################
+loge "wifi_debug in"
+
+# Intent can't be send before boot complete!
+# Wait for boot complete.
+while [ "`getprop sys.boot_completed`" != "1" ]
+do
+    loge "wait for boot complete"
+    sleep 1
+done
+
+DBG="`getprop persist.logtool.wifi`"
+loge "send WIFI dynamic debug broadcaast: $DBG"
+if [ "$DBG" == "1" ]
+then
+    echo D1 > /dev/wmtWifi
+else
+    echo D0 > /dev/wmtWifi
+fi
+

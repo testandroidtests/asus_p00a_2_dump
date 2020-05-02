@@ -1,0 +1,54 @@
+#!/system/bin/sh
+
+WRITE_LOG="log -p d -t LogT-Last-KLOG"
+
+set -x
+
+BOOTUP_TIME=`timestamp`
+BOOTUP_ID=`cat /proc/sys/kernel/random/boot_id`
+
+# Create path
+OUTDIR_LKMSG="/data/logs/lkmsg"
+mkdir -p $OUTDIR_LKMSG
+if [ ! -w "$OUTDIR_LKMSG" ]; then
+    $WRITE_LOG "lkmsg: $OUTDIR_LKMSG not writable"
+    exit 1
+fi
+sync
+
+# check lkmsg file number
+LKMSG_LOG_FILE_MAX="10"
+LKMSG_FILES=`ls -l $OUTDIR_LKMSG |grep "^-"|wc -l`
+if [ $LKMSG_FILES -gt $LKMSG_LOG_FILE_MAX ]; then
+            # remove the lkmsg* when number of *.qmdl is larger than LKMSG_LOG_FILE_MAX
+            FILE_BE_REMOVED=`busybox ls -t $OUTDIR_LKMSG/lkmsg* | busybox tail -n 1`
+            $WRITE_LOG "remove $FILE_BE_REMOVED..."
+            busybox rm -f $FILE_BE_REMOVED
+            $WRITE_LOG "remove $FILE_BE_REMOVED done"
+fi
+
+# check ASDF file number
+#ASDF_PATH="/data/asdf"
+#ASDF_LOG_FILE_MAX="10"
+#ASDF_FILES=`ls -l $ASDF_PATH |grep "^d"|wc -l`
+#ASDF_FILES=`ls -l $ASDF_PATH |grep "ASDF"|wc -l`
+#if [ $ASDF_FILES -gt $ASDF_LOG_FILE_MAX ]; then
+#            ASDF_BE_REMOVED=`busybox ls $ASDF_PATH | busybox head -n 1`
+#            $WRITE_LOG "remove $ASDF_BE_REMOVED..."
+#            busybox rm -rf $ASDF_PATH/$ASDF_BE_REMOVED
+#            $WRITE_LOG "remove $ASDF_BE_REMOVED done"
+#fi
+
+#ENABLE_UTS_ASDF=`getprop persist.asus.mupload.enable`
+#if [ "$ENABLE_UTS_ASDF" == "1" ]; then
+#	ASDF_LKMSG="/data/asdf/ASDF-$BOOTUP_TIME"
+#	mkdir -p $ASDF_LKMSG
+#	cat /proc/last_kmsg > $ASDF_LKMSG/LastShutdown-$BOOTUP_TIME.txt
+#fi
+
+# dump last kernel message
+ENABLE_LKMSG=`getprop persist.logtool.last_kmsg`
+if [ "$ENABLE_LKMSG" == "1" ]; then
+    $WRITE_LOG "Start dump lkmsg to $OUTDIR"
+          cat /proc/last_kmsg > $OUTDIR_LKMSG/lkmsg-$BOOTUP_ID-$BOOTUP_TIME.log
+fi
