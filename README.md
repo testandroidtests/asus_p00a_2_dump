@@ -1,0 +1,13 @@
+# WW_P00A-user 7.0 NRD90M WW_P00A-V5.3.20-20180809 release-keys
+- manufacturer: asus
+- platform: mt8163
+- codename: P00A_2
+- flavor: full_asus8163_ew_380-user
+- release: 7.0
+- id: NRD90M
+- incremental: WW_P00A-V5.3.20-20180809
+- tags: release-keys
+- fingerprint: asus/WW_P00A/P00A_2:7.0/NRD90M/WW_P00A-V5.3.20-20180809:user/release-keys
+- brand: asus
+- branch: WW_P00A-user-7.0-NRD90M-WW_P00A-V5.3.20-20180809-release-keys
+- repo: asus_p00a_2_dump

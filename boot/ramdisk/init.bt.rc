@@ -1,0 +1,11 @@
+
+on property:sys.boot_completed=1
+    start bd_prov
+
+service bd_prov /system/bin/bd_prov
+    class core
+    user root
+    group system bluetooth net_bt_stack
+    oneshot
+    seclabel u:r:bluetooth:s0
+

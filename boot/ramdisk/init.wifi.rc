@@ -1,0 +1,25 @@
+on property:sys.boot_completed=1
+    start wlan_prov
+
+on property:persist.logtool.wifi=*
+    start wifi_debug
+
+service wlan_prov /system/bin/wlan_prov
+    class main
+    user root
+    group system wifi
+    oneshot
+    disabled
+    seclabel u:r:system_server:s0
+
+service wifi_debug /system/bin/wifi_debug
+    class main
+    group system wifi
+    user root
+    oneshot
+    disabled
+    seclabel u:r:system_server:s0
+
+service wifitest_runcmd /system/bin/wifitest_runcmd.sh
+    class late_start
+    oneshot
